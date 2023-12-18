@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import random
 import math
 import json
@@ -11,7 +12,7 @@ numerosats=0
 class Objetos:
     def __init__(self):
         self.centrox = 512
-        self.centroy = 512
+        self.centroy = 300
         self.radioS = 30
         self.radioM = 300
         self.direccion = random.randint(0,360)
@@ -51,6 +52,13 @@ class Objetos:
         y = self.centroy + self.b * math.sin(self.direccion)
         lienzo.move(self.entidad, x - self.centrox, y - self.centroy)
 
+def incluir():
+    global numerosats
+    numerosats+=1
+    nuevo_satelite=Objetos()
+    nuevo_satelite.visualizarS()
+    objetos.append(nuevo_satelite)
+    
 #Método guardar posición de cada objeto (satélites)
 def guardarPosicion():
     conexion = sqlite3.connect("C:\\Users\\fonsi\\Desktop\\ESTUDIO\\IMF 2\\ACCESO A DATOS\\Practicas\\Practica7AD\\nasa.sqlite3")
@@ -73,7 +81,7 @@ def guardarPosicion():
 raiz=tk.Tk()
 
 #Lienzo
-lienzo=tk.Canvas(width=1024,height=1024)
+lienzo=tk.Canvas(width=1024,height=600)
 lienzo.pack()
 
 #Declaración de objeto
@@ -108,25 +116,41 @@ try:
 except:
     print("ERROR")
 
-
-
 #Introducción de objetos en la lista
 for i in range(0,numerosats):
     objetos.append(Objetos())
 
-#Para cada uno de los objetos credos dar un atributo específico
+#Para cada uno de los objetos creados dar un atributo específico
 for elemento in objetos:
     elemento.visualizarS()
+    
 
-#Velocidad de movimiento en el tiempo 
-def velocidad():    
-    for objeto in objetos:
-        objeto.mueve()
-    raiz.after(10,velocidad)
+#Crear frame para organizar los botones
+frame_botones=tk.Frame(raiz)
+frame_botones.pack()
 
-velocidad()
+#Boton par añadir elementos
+boton_crear=tk.Button(frame_botones,text="Añadir 1",command=incluir)
+boton_crear.grid(row=0,column=0,padx=10,pady=10)
+
+#velocaidad seleccionada
+velocidad_seleccionada = tk.StringVar()
+velocidad_seleccionada.set("10")
+
+combobox= ttk.Combobox(frame_botones,values=[0,10,20,30,40,50,75,100],textvariable=velocidad_seleccionada)
+combobox.grid(row=0,column=2,padx=10,pady=10)
 
 #Boton para guardar
-boton = tk.Button(raiz,text="Guardar", command=guardarPosicion)
-boton.pack()
+boton = tk.Button(frame_botones,text="Guardar", command=guardarPosicion)
+boton.grid(row=0,column=1,padx=10,pady=10)
+
+
+#Velocidad de movimiento en el tiempo 
+def velocidad():
+    eleccion=int(velocidad_seleccionada.get())
+    for objeto in objetos:
+        objeto.mueve()
+    raiz.after(eleccion,velocidad)
+velocidad()
+
 raiz.mainloop()
