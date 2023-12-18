@@ -58,7 +58,7 @@ def incluir():
     nuevo_satelite=Objetos()
     nuevo_satelite.visualizarS()
     objetos.append(nuevo_satelite)
-    
+
 #Método guardar posición de cada objeto (satélites)
 def guardarPosicion():
     conexion = sqlite3.connect("C:\\Users\\fonsi\\Desktop\\ESTUDIO\\IMF 2\\ACCESO A DATOS\\Practicas\\Practica7AD\\nasa.sqlite3")
@@ -70,30 +70,19 @@ def guardarPosicion():
                                 '''+str(objeto.radioS)+''',
                                 '''+str(objeto.direccion)+''',
                                 "'''+str(objeto.color3)+'''",
-                                '''+str(objeto.grosorborde)+''',
                                 "'''+str(objeto.entidad)+'''",
                                 '''+str(objeto.velocidad)+''',
                                 '''+str(objeto.a)+''',
                                 '''+str(objeto.b)+''') ''')
     conexion.commit()
     conexion.close()
-                 
-raiz=tk.Tk()
-
-#Lienzo
-lienzo=tk.Canvas(width=1024,height=600)
-lienzo.pack()
-
-#Declaración de objeto
-objeto=Objetos()
-objeto.visualizarT()
-
+    
 #Cargar satelites desde sql
 try:
     conexion = sqlite3.connect("C:\\Users\\fonsi\\Desktop\\ESTUDIO\\IMF 2\\ACCESO A DATOS\\Practicas\\Practica7AD\\nasa.sqlite3")
     cursor = conexion.cursor()
 
-    cursor.execute('''SELECT *FROM satelites''')
+    cursor.execute('''SELECT * FROM satelites''')
 
     while True:
         fila = cursor.fetchone()
@@ -105,16 +94,25 @@ try:
         satelite.radioS=fila[3]
         satelite.direccion=fila[4]
         satelite.color3=fila[5]
-        satelite.grosorborde=fila[6]
-        satelite.entidad=fila[7]
-        satelite.velocidad=fila[8]
-        satelite.a=fila[9]
-        satelite.b=fila[10]
+        satelite.entidad=fila[6]
+        satelite.velocidad=fila[7]
+        satelite.a=fila[8]
+        satelite.b=fila[9]
         objetos.append(Objetos())
 
     conexion.close()
 except:
     print("ERROR")
+                 
+raiz=tk.Tk()
+
+#Lienzo
+lienzo=tk.Canvas(width=1024,height=600)
+lienzo.pack()
+
+#Declaración de objeto
+objeto=Objetos()
+objeto.visualizarT()
 
 #Introducción de objetos en la lista
 for i in range(0,numerosats):
@@ -124,7 +122,6 @@ for i in range(0,numerosats):
 for elemento in objetos:
     elemento.visualizarS()
     
-
 #Crear frame para organizar los botones
 frame_botones=tk.Frame(raiz)
 frame_botones.pack()
@@ -137,13 +134,13 @@ boton_crear.grid(row=0,column=0,padx=10,pady=10)
 velocidad_seleccionada = tk.StringVar()
 velocidad_seleccionada.set("10")
 
+#Combobox para seleccionar la velocidad 
 combobox= ttk.Combobox(frame_botones,values=[0,10,20,30,40,50,75,100],textvariable=velocidad_seleccionada)
 combobox.grid(row=0,column=2,padx=10,pady=10)
 
 #Boton para guardar
 boton = tk.Button(frame_botones,text="Guardar", command=guardarPosicion)
 boton.grid(row=0,column=1,padx=10,pady=10)
-
 
 #Velocidad de movimiento en el tiempo 
 def velocidad():
