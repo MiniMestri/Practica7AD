@@ -5,7 +5,7 @@ import json
 import sqlite3
 
 objetos=[]
-numerosats=10
+numerosats=0
 
 #Clase objeto "Objetos"
 class Objetos:
@@ -79,6 +79,36 @@ lienzo.pack()
 #Declaración de objeto
 objeto=Objetos()
 objeto.visualizarT()
+
+#Cargar satelites desde sql
+try:
+    conexion = sqlite3.connect("C:\\Users\\fonsi\\Desktop\\ESTUDIO\\IMF 2\\ACCESO A DATOS\\Practicas\\Practica7AD\\nasa.sqlite3")
+    cursor = conexion.cursor()
+
+    cursor.execute('''SELECT *FROM satelites''')
+
+    while True:
+        fila = cursor.fetchone()
+        if fila is None:
+            break
+        satelite= Objetos()
+        satelite.centrox=fila[1]
+        satelite.centroy=fila[2]
+        satelite.radioS=fila[3]
+        satelite.direccion=fila[4]
+        satelite.color3=fila[5]
+        satelite.grosorborde=fila[6]
+        satelite.entidad=fila[7]
+        satelite.velocidad=fila[8]
+        satelite.a=fila[9]
+        satelite.b=fila[10]
+        objetos.append(Objetos())
+
+    conexion.close()
+except:
+    print("ERROR")
+
+
 
 #Introducción de objetos en la lista
 for i in range(0,numerosats):
