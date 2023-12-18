@@ -2,6 +2,7 @@ import tkinter as tk
 import random
 import math
 import json
+import sqlite3
 
 objetos=[]
 numerosats=10
@@ -52,11 +53,22 @@ class Objetos:
 
 #Método guardar posición de cada objeto (satélites)
 def guardarPosicion():
-    print("Guardar posicion")
-    cadena=json.dumps([vars(objeto) for i in objetos])
-    archivo=open("C:\\Users\\fonsi\\Desktop\\ESTUDIO\\IMF 2\\ACCESO A DATOS\\Practicas\\Practica6AD\\satelite.json","w")
-    archivo.write(cadena)
-    archivo.close()
+    conexion = sqlite3.connect("C:\\Users\\fonsi\\Desktop\\ESTUDIO\\IMF 2\\ACCESO A DATOS\\Practicas\\Practica7AD\\nasa.sqlite3")
+    cursor = conexion.cursor()
+    for objeto in objetos:
+        cursor.execute('''INSERT INTO satelites VALUES (NULL,
+                                '''+str(objeto.centrox)+''',
+                                '''+str(objeto.centroy)+''',
+                                '''+str(objeto.radioS)+''',
+                                '''+str(objeto.direccion)+''',
+                                "'''+str(objeto.color3)+'''",
+                                '''+str(objeto.grosorborde)+''',
+                                "'''+str(objeto.entidad)+'''",
+                                '''+str(objeto.velocidad)+''',
+                                '''+str(objeto.a)+''',
+                                '''+str(objeto.b)+''') ''')
+    conexion.commit()
+    conexion.close()
                  
 raiz=tk.Tk()
 
