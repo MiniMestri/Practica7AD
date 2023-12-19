@@ -21,9 +21,11 @@ class Objetos:
         self.color3="grey"
         self.grosorborde=10
         self.entidad=""
-        self.velocidad = random.randint(1,10)
+        self.velocidad = random.randint(1,20)
         self.a=random.randint(2,8)
         self.b=random.randint(1,4)
+        self.energia= 100
+        self.entidadenergia=""
         
 #Método visualizar propiedades tierra
     def visualizarT(self):
@@ -44,19 +46,57 @@ class Objetos:
             self.centrox+self.radioS/2,
             self.centroy+self.radioS/2,
             fill=self.color3)
+        self.visualizarEnergia()
+    def visualizarEnergia(self):
+        self.entidadenergia = lienzo.create_rectangle(
+            self.centrox-self.radioS/2,
+            self.centroy-self.radioS/2-10,
+            self.centrox+self.radioS/2,
+            self.centroy-self.radioS/2-8,
+            fill="red")
         
 #Movimientos elípticos de los satélites
     def mueve(self):
-        self.direccion += math.radians(self.velocidad)
-        x = self.centrox + self.a * math.cos(self.direccion)
-        y = self.centroy + self.b * math.sin(self.direccion)
-        lienzo.move(self.entidad, x - self.centrox, y - self.centroy)
+         if self.energia > 0:
+            self.energia -= 0.1
+
+         self.direccion += math.radians(self.velocidad)
+         x = self.centrox + self.a * math.cos(self.direccion)
+         y = self.centroy + self.b * math.sin(self.direccion)
+
+         # Mover la entidad a las nuevas coordenadas
+         lienzo.move(self.entidad, x - self.centrox, y - self.centroy)
+
+         self.centrox = x
+         self.centroy = y
+
+         direccion_x = math.cos(self.direccion)
+         direccion_y = math.sin(self.direccion)
+
+         lienzo.move(self.entidadenergia, direccion_x, direccion_y)
+
+         # Actualizar la barra de energía
+         anchuraenergia = (self.energia / 100) * self.radioS
+         lienzo.coords(
+            self.entidadenergia,
+            self.centrox - self.radioS / 2,
+            self.centroy - self.radioS / 2 - 10,
+            self.centrox - self.radioS / 2 + anchuraenergia,
+            self.centroy - self.radioS / 2 - 8 
+         )
+
+        #Eliminar satelite si llega a 0 de vida
+         if self.energia <=0:
+             lienzo.delete(self.entidad)
+             lienzo.delete(self.entidadenergia)
+             objetos.remove(self)
 
 def incluir():
     global numerosats
     numerosats+=1
     nuevo_satelite=Objetos()
     nuevo_satelite.visualizarS()
+    nuevo_satelite.visualizarEnergia()
     objetos.append(nuevo_satelite)
 
 #Método guardar posición de cada objeto (satélites)
@@ -73,7 +113,9 @@ def guardarPosicion():
                                 "'''+str(objeto.entidad)+'''",
                                 '''+str(objeto.velocidad)+''',
                                 '''+str(objeto.a)+''',
-                                '''+str(objeto.b)+''') ''')
+                                '''+str(objeto.b)+''',
+                                '''+str(objeto.energia)+''',
+                               "'''+str(objeto.entidadenergia)+'''") ''')
     conexion.commit()
     conexion.close()
     
