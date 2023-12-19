@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 import random
 import math
-import json
 import sqlite3
 
 objetos=[]
@@ -85,7 +84,7 @@ class Objetos:
             self.centroy - self.radioS / 2 - 8 
          )
 
-        #Eliminar satelite si llega a 0 de vida
+        #Eliminar satelite si llega a 0 de energia
          if self.energia <=0:
              lienzo.delete(self.entidad)
              lienzo.delete(self.entidadenergia)
@@ -156,14 +155,6 @@ lienzo.pack()
 objeto=Objetos()
 objeto.visualizarT()
 
-#Introducción de objetos en la lista
-for i in range(0,numerosats):
-    objetos.append(Objetos())
-
-#Para cada uno de los objetos creados dar un atributo específico
-for elemento in objetos:
-    elemento.visualizarS()
-    
 #Crear frame para organizar los botones
 frame_botones=tk.Frame(raiz)
 frame_botones.pack()
